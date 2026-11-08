@@ -1,0 +1,31 @@
+# Game data, installers, images, and other large or copyrighted files
+games/
+*.iso
+*.img
+*.gz
+*.xz
+*.zip
+*.7z
+*.AppImage
+*.deb
+*.exe
+*.msi
+*.bin
+*.cue
+
+# Keep manifests even though they are text
+!manifests/*.tsv
+!manifests/*.md
+!manifests/*.sha256
+
+# Local secrets and machine-specific notes
+*.password
+secrets/
+local/
+
+# Editor and OS cruft
+.DS_Store
+*~
+*.swp
+.idea/
+.vscode/
