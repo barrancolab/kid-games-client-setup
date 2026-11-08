@@ -112,6 +112,6 @@ manifests/
 | Hardware inventory | partial — RAM confirmed, storage to confirm |
 | Offline staging USB | installer USB flashed and verified |
 | Lubuntu install | not started |
-| Kiosk session | not started |
+| Kiosk session | scripts and configs written, not yet installed |
 | ScummVM + games | Freddi Fish 1 verified on staging |
 | Acceptance + freeze | not started |

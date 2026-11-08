@@ -1,0 +1,79 @@
+# 03 — Installing Lubuntu
+
+## Boot the installer
+
+1. Plug the verified installer USB into the Wyse.
+2. Power on, tap **F12**, choose the **UEFI: Lexar** entry.
+3. Unplug Ethernet. The client should never fetch updates during install.
+
+## If the disk will not erase
+
+The previous OS on this machine was **Proxmox**, which leaves an LVM volume
+group called `pve`. Calamares refuses to touch a disk whose mappings are
+active, and `wipefs` reports `device or resource busy`.
+
+Fix, on the live session:
+
+```bash
+sudo swapoff -a
+sudo vgchange -an
+sudo zpool export -a 2>/dev/null
+sudo dmsetup remove_all
+
+sudo wipefs -a /dev/sda
+```
+
+`dmsetup remove_all` is the step that usually clears it.
+
+If it is still busy, bypass the check:
+
+```bash
+sudo dd if=/dev/zero of=/dev/sda bs=1M count=64 conv=fsync
+sudo partprobe /dev/sda
+```
+
+Do this in one session — if you reboot the live medium, the `pve` VG can
+reactivate and you are back to `EBUSY`.
+
+## Installer choices
+
+| Step | Choice |
+| --- | --- |
+| Installation type | **Minimal installation** |
+| Disk | Erase whole disk, single ext4 root, no LVM, no encryption |
+| Swap | None, or a swap file — 8 GB RAM makes swap irrelevant |
+| Third-party drivers | **No** |
+| Download updates while installing | **No** |
+| Hostname | `kiosk` |
+| User | `parent` (administrator) |
+| Ubuntu Pro / Livepatch | Skip |
+
+Do **not** create the `games` user here. It is created in phase 3, after the
+kiosk scripts are in place.
+
+## First boot
+
+1. Remove the installer USB.
+2. Log in as `parent`.
+3. Confirm the machine is offline and record the disk:
+
+```bash
+lsblk -d -o NAME,SIZE,ROTA,TRAN,MODEL,SERIAL
+ip address
+rfkill list
+```
+
+Expected: `ip address` shows only `lo`; `rfkill list` shows Wi-Fi and Bluetooth
+blocked or absent.
+
+4. Put the machine's disk model into `manifests/versions.example.md`.
+
+## Copy the repo onto the client
+
+```bash
+# from the USB
+cp -r /media/parent/<usb>/kid-games-client-setup ~/
+```
+
+The repo contains no game data and no ISOs, so it is small enough to carry on
+the same stick as the games.

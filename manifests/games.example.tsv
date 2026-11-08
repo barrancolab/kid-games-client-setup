@@ -1,0 +1,15 @@
+# Game inventory for the client.
+#
+# One row per game. Fields are tab-separated.
+#
+#   directory          Folder name under /home/games/Games/
+#   scummvm_target     Target ID reported by `scummvm --detect`
+#   steam_appid        Steam app ID used to acquire it, or "-" if not Steam
+#   size_mb            Payload size on disk
+#   verified_on        Date the game was last launched successfully
+#   notes              Free text
+#
+# Fill this in on the staging machine, before copying to USB.
+#
+# directory	scummvm_target	steam_appid	size_mb	verified_on	notes
+Freddi Fish 1	scumm:freddi	283940	102	2026-11-08	.he0-.he4 only; bundled ScummVM discarded

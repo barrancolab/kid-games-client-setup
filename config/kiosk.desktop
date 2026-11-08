@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Kiosk
+Comment=ScummVM kiosk session
+Exec=/usr/local/bin/kiosk-session.sh
+TryExec=/usr/local/bin/kiosk-session.sh
+DesktopNames=Kiosk
