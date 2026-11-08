@@ -3,13 +3,16 @@
 An offline, kid-proof ScummVM gaming box built on a Dell Wyse 5060 thin client
 running Lubuntu.
 
-The client is **airgapped for life**: it never joins a network. Games and
-software arrive on a USB stick prepared on a separate internet-connected
-machine.
+The client is **offline by default**: networking is disabled for normal use, so
+the child never has a network connection, a browser, or a route to the
+internet. An adult can deliberately enable the network from the admin console
+for maintenance, then disable it again. Games and software normally arrive on a
+USB stick prepared on a separate internet-connected machine.
 
 ## Design goals
 
-- **Airgapped** — no Wi-Fi, no Ethernet, no Bluetooth, no updates at runtime.
+- **Offline by default** — no Wi-Fi, no Ethernet, no Bluetooth during a kid
+  session. Networking is off unless an adult enables it from the admin console.
 - **Kid-proof** — boots straight into a fullscreen ScummVM launcher. No desktop,
   panel, terminal, browser, or file manager.
 - **Recoverable** — a verified master USB can rebuild the machine; save games
@@ -24,9 +27,9 @@ machine.
 | Session         | Full kiosk: autologin → ScummVM                    |
 | Hardware        | 8 GB RAM confirmed; 64–128 GB flash storage        |
 | Software scope  | ScummVM only (no emulators, no native Linux games) |
-| OS              | Lubuntu LTS (24.04 LTS baseline)                   |
-| Network         | Permanently disabled; USB-only content transfer    |
-| Admin access    | Hidden GRUB "admin console" entry + live USB       |
+| OS              | Lubuntu 26.04.1 LTS                                |
+| Network         | Off by default; admin-console toggle only          |
+| Admin access    | Hidden key combo + GRUB "admin console" + live USB |
 
 ## Bill of materials
 
@@ -106,9 +109,9 @@ manifests/
 | Phase | State |
 | ----- | ----- |
 | Plan and repo scaffold | done |
-| Hardware inventory | not started |
-| Offline staging USB | not started |
+| Hardware inventory | partial — RAM confirmed, storage to confirm |
+| Offline staging USB | installer USB flashed and verified |
 | Lubuntu install | not started |
 | Kiosk session | not started |
-| ScummVM + games | not started |
+| ScummVM + games | Freddi Fish 1 verified on staging |
 | Acceptance + freeze | not started |

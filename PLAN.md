@@ -6,11 +6,14 @@ desktop.
 
 ## Guiding constraints
 
-1. **The client is never online.** Everything is staged on an internet-connected
-   machine and carried over on USB.
-2. **Frozen beats patched.** An airgapped box has a tiny attack surface. Pin the
-   OS and ScummVM versions, record them, and rebuild from the master USB rather
-   than applying updates.
+1. **The client is offline during use.** A kid session has no network at all.
+   Networking is a deliberate admin action: enable it, do the work, disable it
+   again. Content is normally staged on an internet-connected machine and
+   carried over on USB.
+2. **Frozen beats drifting, but patches are allowed.** Pin the OS and ScummVM
+   versions and record them. Apply security updates only in a maintenance
+   window over a trusted network, then re-freeze and re-record. Rebuild from the
+   master USB rather than letting the install drift.
 3. **Test games before they reach the client.** ScummVM compatibility is
    per-title and per-release. A game that is not verified on the staging machine
    does not go on the USB.
@@ -59,11 +62,13 @@ the USB has been launched successfully on the staging machine.
 - [ ] Create `parent` (sudo) only; create `games` later.
 - [ ] Partition: single ext4 root, no separate home, swap file or zram.
 - [ ] First boot with the Ethernet cable unplugged.
-- [ ] Disable networking, Bluetooth, and NTP; set clock and timezone manually.
+- [ ] Disable Wi-Fi, Bluetooth, and NetworkManager autoconnect; set clock and
+      timezone manually. Networking stays down until an admin enables it.
 - [ ] Remove or disable `snapd`, `unattended-upgrades`, and `apport` if present.
 
 **Exit criteria:** `ip address` shows only `lo`; `rfkill list` shows everything
-blocked; the machine boots to a desktop with no network errors.
+blocked; the machine boots to a desktop with no network errors; an admin can
+bring the link up and take it back down deliberately.
 
 ## Phase 3 — Kiosk session (2–4 hours)
 
@@ -114,7 +119,9 @@ or verified; the recovery card exists.
 - [ ] Back up saves monthly and before any change.
 - [ ] Rebuild the image annually from the frozen kit, or when a game requires a
       newer ScummVM.
-- [ ] Never connect the client to a network, even "just for a minute".
+- [ ] Never leave the client networked after a maintenance session: bring the
+      link up, do the work, bring it down, then confirm `ip address` shows only
+      `lo`.
 
 ## Risks and mitigations
 
@@ -126,7 +133,8 @@ or verified; the recovery card exists.
 | Child finds the admin key combo | Desktop access as `games` | Combo is obscure; `games` has no sudo; full admin still needs the GRUB console |
 | Power loss during a save | Corrupt save | ext4 journal, autosave where supported, monthly backups |
 | SSD fills up | Cannot add games | 128 GB SSD, inventory sizes, prune before adding |
-| No security updates | Theoretically vulnerable | Airgapped, no browser, no untrusted media, frozen and rebuilt |
+| No security updates | Theoretically vulnerable | Offline by default, no browser, no untrusted media; patch in maintenance windows |
+| Admin forgets to disable networking | Client stays online | Disable autoconnect; explicit down-check in the maintenance checklist |
 | BIOS settings changed by a child | Boot failure | BIOS password, locked case if needed |
 
 ## Timeline
@@ -141,7 +149,7 @@ or verified; the recovery card exists.
 ## Definition of done
 
 - Cold boot reaches the game launcher in under 40 seconds with no login prompt.
-- The machine has no network interfaces other than loopback.
+- The machine has no network connection during a kid session (loopback only).
 - A child cannot reach a shell, file manager, settings app, or the desktop.
 - Every curated game launches, plays audio, accepts input, and saves/loads.
 - The controller works in every game.
