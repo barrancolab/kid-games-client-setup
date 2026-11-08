@@ -129,6 +129,7 @@ or verified; the recovery card exists.
 | ---- | ------ | ---------- |
 | Steam game data is wrapped, encrypted, or not ScummVM-compatible | Game unusable | Test on the staging machine first; prefer Humble/GOG DRM-free builds |
 | Wyse UEFI quirks block the installer | Cannot install | Fall back to legacy BIOS boot; disable Secure Boot |
+| Old OS leaves LVM/ZFS metadata; installer refuses to erase the disk | Cannot install | `vgchange -an`, `zpool export -a`, `dmsetup remove_all`, then zero the first 64 MB with `dd` |
 | AppImage needs FUSE, which is missing | ScummVM will not start | Use the static tarball, or run with `APPIMAGE_EXTRACT_AND_RUN=1` |
 | Child finds the admin key combo | Desktop access as `games` | Combo is obscure; `games` has no sudo; full admin still needs the GRUB console |
 | Power loss during a save | Corrupt save | ext4 journal, autosave where supported, monthly backups |
