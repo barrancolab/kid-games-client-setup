@@ -56,7 +56,9 @@ grep -qxF /usr/sbin/nologin /etc/shells 2>/dev/null \
 say "pointing $SCUMMVM_DIR at the installed binary"
 install -d -m 0755 "$SCUMMVM_DIR"
 ln -sfn /usr/games/scummvm "$SCUMMVM_DIR/scummvm"
-"$SCUMMVM_DIR/scummvm" --version | head -1
+scummvm_out=$("$SCUMMVM_DIR/scummvm" --version 2>&1)
+scummvm_version=${scummvm_out%%$'\n'*}
+printf '%s\n' "$scummvm_version"
 
 # ---------------------------------------------------------------- kiosk
 say "installing the kiosk session"
@@ -114,7 +116,7 @@ say "making sure networking is off"
 # ---------------------------------------------------------------- summary
 say "done"
 printf 'games user      %s (locked password, nologin shell)\n' "$GAMES_USER"
-printf 'scummvm         %s\n' "$("$SCUMMVM_DIR/scummvm" --version | head -1)"
+printf 'scummvm         %s\n' "$scummvm_version"
 printf 'registered now  %s new game(s)\n' "$registered"
 printf 'games directory %s\n' "$GAMES_HOME/Games"
 printf 'admin shell     Ctrl+Alt+Shift+F12, then the parent password\n'
