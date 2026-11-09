@@ -68,11 +68,44 @@ blocked or absent.
 
 4. Put the machine's disk model into `manifests/versions.example.md`.
 
-## Copy the repo onto the client
+## Finish the install from the USB payload
+
+The payload on the USB's `writable` partition is self-contained: the repo, the
+ScummVM package, every missing library, and the game data. No network is
+needed on the client.
+
+Plug the USB into the client, open a terminal as `parent`, and run:
 
 ```bash
-# from the USB
-cp -r /media/parent/<usb>/kid-games-client-setup ~/
+sudo /media/parent/writable/kiosk-payload/kid-games-client-setup/scripts/setup-client.sh
+```
+
+That one command:
+
+1. installs the offline `.deb` set (unclutter, xterm, SDL2, audio libs),
+2. creates the locked `games` user,
+3. links `/opt/scummvm/scummvm`,
+4. runs `install-kiosk.sh` (Openbox session, SDDM autologin, hardening),
+5. adds the GRUB admin-console entry,
+6. copies the games to `/home/games/Games`,
+7. registers them with ScummVM,
+8. writes `manifest.sha256`, and
+9. turns networking off.
+
+Then `sudo reboot`.
+
+If the USB mounts somewhere else, pass the payload path explicitly:
+
+```bash
+sudo ./scripts/setup-client.sh /media/parent/writable/kiosk-payload
+```
+
+## Copy the repo onto the client (optional)
+
+Only needed if you want the repo on the client after setup:
+
+```bash
+cp -r /media/parent/writable/kiosk-payload/kid-games-client-setup ~/
 ```
 
 The repo contains no game data and no ISOs, so it is small enough to carry on

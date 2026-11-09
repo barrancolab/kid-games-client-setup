@@ -40,6 +40,11 @@ sudo passwd -l games          # no password, no login
 
 `games` has no sudo. It owns `/home/games` and nothing else.
 
+Some PAM stacks check `/etc/shells` before starting a session, so
+`/usr/sbin/nologin` must be listed there for SDDM to accept the account. It
+still refuses interactive logins; the locked password is the real lock.
+`setup-client.sh` adds the entry automatically.
+
 ## ScummVM's own settings
 
 `/home/games/.config/scummvm/scummvm.ini`:

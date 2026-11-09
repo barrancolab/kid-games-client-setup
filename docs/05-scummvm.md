@@ -46,7 +46,8 @@ sudo -u games /opt/scummvm/scummvm \
   --detect --path="/home/games/Games/Freddi Fish 1"
 ```
 
-Expected for Freddi Fish 1: `scumm:freddi`.
+Expected for Freddi Fish 1: GameID `scumm:freddi`, target `freddi-win`. The
+target is the section name in `scummvm.ini`; the GameID identifies the engine.
 
 ## Per-game settings worth changing
 

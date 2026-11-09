@@ -75,7 +75,7 @@ Runtime are discarded.
 
 ## Verified titles
 
-| Title | App ID | ScummVM target | Linux | Status |
+| Title | App ID | ScummVM GameID | Linux | Status |
 | --- | --- | --- | --- | --- |
 | Freddi Fish 1 | 283940 | `scumm:freddi` | yes | verified |
 | Freddi Fish 2 | 294530 | `scumm:freddi2` | yes | compatible |

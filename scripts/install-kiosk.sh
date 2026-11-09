@@ -26,11 +26,28 @@ id "$GAMES_USER" >/dev/null 2>&1 \
 [ -x "$SCUMMVM_DIR/scummvm" ] \
   || die "$SCUMMVM_DIR/scummvm not found; install ScummVM first (see docs/05-scummvm.md)"
 
-say "installing packages"
 export DEBIAN_FRONTEND=noninteractive
-apt-get update -qq
-apt-get install -y --no-install-recommends \
-  openbox sddm unclutter xterm x11-xserver-utils dbus-x11
+
+# Only touch apt when something is actually missing. On a client that was
+# prepared offline, every package is already installed and this whole block
+# is skipped, so no network is needed.
+missing_pkgs=()
+for p in openbox sddm unclutter xterm x11-xserver-utils dbus-x11; do
+  dpkg-query -W -f='${Status}' "$p" 2>/dev/null \
+    | grep -q 'install ok installed' || missing_pkgs+=("$p")
+done
+
+if [ ${#missing_pkgs[@]} -gt 0 ]; then
+  say "installing packages: ${missing_pkgs[*]}"
+  if [ -n "${OFFLINE_DEBS:-}" ] && [ -d "$OFFLINE_DEBS" ]; then
+    apt-get install -y --no-install-recommends "$OFFLINE_DEBS"/*.deb
+  else
+    apt-get update -qq
+    apt-get install -y --no-install-recommends "${missing_pkgs[@]}"
+  fi
+else
+  say "all kiosk packages already installed"
+fi
 
 say "installing kiosk scripts into $PREFIX"
 install -d -m 0755 "$PREFIX" "$KIOSK_ETC"
