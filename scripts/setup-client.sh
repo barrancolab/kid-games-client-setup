@@ -3,7 +3,7 @@
 #
 # Run as root, straight from the USB payload:
 #
-#   sudo /media/parent/writable/kiosk-payload/kid-games-client-setup/scripts/setup-client.sh
+#   sudo /media/$USER/writable/kiosk-payload/kid-games-client-setup/scripts/setup-client.sh
 #
 # The payload directory is found next to this repository (../debs, ../games).
 # Pass it explicitly if the layout differs:
@@ -23,6 +23,15 @@ GAMES_USER=${GAMES_USER:-games}
 GAMES_HOME=/home/$GAMES_USER
 SCUMMVM_DIR=${SCUMMVM_DIR:-/opt/scummvm}
 INI="$GAMES_HOME/.config/scummvm/scummvm.ini"
+
+# The account the admin hatch drops into: whoever invoked sudo.
+ADMIN_USER=${ADMIN_USER:-${SUDO_USER:-}}
+if [ -z "$ADMIN_USER" ] || [ "$ADMIN_USER" = root ]; then
+  ADMIN_USER=$(awk -F: '$3 >= 1000 && $3 < 65534 { print $1; exit }' /etc/passwd)
+fi
+[ -n "$ADMIN_USER" ] || die "could not determine the admin account; set ADMIN_USER=name"
+id "$ADMIN_USER" >/dev/null 2>&1 || die "admin user '$ADMIN_USER' does not exist"
+export ADMIN_USER
 
 die() { printf 'error: %s\n' "$*" >&2; exit 1; }
 say() { printf '\n==> %s\n' "$*"; }
@@ -119,6 +128,6 @@ printf 'games user      %s (locked password, nologin shell)\n' "$GAMES_USER"
 printf 'scummvm         %s\n' "$scummvm_version"
 printf 'registered now  %s new game(s)\n' "$registered"
 printf 'games directory %s\n' "$GAMES_HOME/Games"
-printf 'admin shell     Ctrl+Alt+Shift+F12, then the parent password\n'
+printf 'admin shell     Ctrl+Alt+Shift+F12, then the password for %s\n' "$ADMIN_USER"
 printf 'admin boot      hold Esc at power-on, pick "Admin console (no kiosk)"\n'
 printf '\nReboot to start the kiosk:\n\n  sudo reboot\n\n'

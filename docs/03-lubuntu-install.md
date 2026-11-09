@@ -45,7 +45,7 @@ reactivate and you are back to `EBUSY`.
 | Third-party drivers | **No** |
 | Download updates while installing | **No** |
 | Hostname | `kiosk` |
-| User | `parent` (administrator) |
+| User | your own account (administrator), e.g. `jbarranco` |
 | Ubuntu Pro / Livepatch | Skip |
 
 Do **not** create the `games` user here. It is created in phase 3, after the
@@ -54,7 +54,7 @@ kiosk scripts are in place.
 ## First boot
 
 1. Remove the installer USB.
-2. Log in as `parent`.
+2. Log in as your account.
 3. Confirm the machine is offline and record the disk:
 
 ```bash
@@ -74,10 +74,10 @@ The payload on the USB's `writable` partition is self-contained: the repo, the
 ScummVM package, every missing library, and the game data. No network is
 needed on the client.
 
-Plug the USB into the client, open a terminal as `parent`, and run:
+Plug the USB into the client, open a terminal as your account, and run:
 
 ```bash
-sudo /media/parent/writable/kiosk-payload/kid-games-client-setup/scripts/setup-client.sh
+sudo /media/$USER/writable/kiosk-payload/kid-games-client-setup/scripts/setup-client.sh
 ```
 
 That one command:
@@ -97,7 +97,7 @@ Then `sudo reboot`.
 If the USB mounts somewhere else, pass the payload path explicitly:
 
 ```bash
-sudo ./scripts/setup-client.sh /media/parent/writable/kiosk-payload
+sudo ./scripts/setup-client.sh /media/$USER/writable/kiosk-payload
 ```
 
 ## Copy the repo onto the client (optional)
@@ -105,7 +105,7 @@ sudo ./scripts/setup-client.sh /media/parent/writable/kiosk-payload
 Only needed if you want the repo on the client after setup:
 
 ```bash
-cp -r /media/parent/writable/kiosk-payload/kid-games-client-setup ~/
+cp -r /media/$USER/writable/kiosk-payload/kid-games-client-setup ~/
 ```
 
 The repo contains no game data and no ISOs, so it is small enough to carry on

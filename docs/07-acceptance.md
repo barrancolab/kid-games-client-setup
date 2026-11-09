@@ -57,7 +57,7 @@ Repeat for every installed title.
 | --- | --- | --- |
 | 26 | Hidden combo asks for a password | |
 | 27 | Wrong password returns to ScummVM | |
-| 28 | Correct password gives a shell as `parent` | |
+| 28 | Correct password gives a shell as the admin account | |
 | 29 | GRUB menu is hidden at boot | |
 | 30 | Esc at power-on reveals the menu | |
 | 31 | "Admin console (no kiosk)" boots to a text login | |

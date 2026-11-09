@@ -90,5 +90,5 @@ Check `lsusb` and `evtest`. ScummVM reports joysticks in its log at startup.
 
 ### Forgot the admin password
 
-Boot the GRUB admin console, log in as `parent`. If that password is also lost,
+Boot the GRUB admin console, log in as your admin account. If that password is also lost,
 boot a live USB and `chroot` — the machine is not bricked, just inconvenient.

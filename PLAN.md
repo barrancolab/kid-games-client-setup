@@ -59,7 +59,7 @@ the USB has been launched successfully on the staging machine.
 - [ ] Set BIOS: UEFI, Secure Boot off if needed, USB boot on, AC power recovery
       on, PXE/Wake-on-LAN off, Wi-Fi/Bluetooth off if present.
 - [ ] Boot the installer USB and install Lubuntu with the minimal profile.
-- [ ] Create `parent` (sudo) only; create `games` later.
+- [ ] Create one admin account (sudo) only; create `games` later.
 - [ ] Partition: single ext4 root, no separate home, swap file or zram.
 - [ ] First boot with the Ethernet cable unplugged.
 - [ ] Disable Wi-Fi, Bluetooth, and NetworkManager autoconnect; set clock and

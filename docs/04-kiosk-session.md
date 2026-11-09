@@ -86,12 +86,16 @@ Two independent hatches, both password-protected.
 
 1. kills ScummVM,
 2. opens a fullscreen `xterm`,
-3. runs `su - parent`, which asks for the admin password.
+3. runs `su - <admin>`, which asks for the admin account's password.
 
 Wrong password: the terminal exits and ScummVM comes back. Nothing is
 reachable without the password. Note that the game is interrupted as soon as
 the combo is pressed — that is deliberate, so mashing the keys does not leave a
 login prompt sitting on screen.
+
+The admin account is recorded at install time in `/etc/kiosk/admin-user`
+(whoever ran `sudo`, or the first regular account). Override it with
+`ADMIN_USER=name` when running `install-kiosk.sh`.
 
 ### GRUB admin console
 
@@ -100,7 +104,7 @@ boots to `multi-user.target` — a plain text login, no X, no ScummVM. It also
 hides the GRUB menu.
 
 Hold **Esc** during power-on to reveal the menu, pick the admin entry, log in
-as `parent`.
+as your admin account.
 
 This hatch works even if the kiosk session is broken.
 

@@ -20,6 +20,18 @@ say() { printf '==> %s\n' "$*"; }
 
 [ "$(id -u)" -eq 0 ] || die "run as root"
 
+# The account the hidden admin hatch drops into. Defaults to whoever ran
+# sudo, then to the first regular account on the box.
+ADMIN_USER=${ADMIN_USER:-${SUDO_USER:-}}
+if [ -z "$ADMIN_USER" ] || [ "$ADMIN_USER" = root ]; then
+  ADMIN_USER=$(awk -F: '$3 >= 1000 && $3 < 65534 { print $1; exit }' /etc/passwd)
+fi
+[ -n "$ADMIN_USER" ] || die "could not determine the admin account; set ADMIN_USER=name"
+id "$ADMIN_USER" >/dev/null 2>&1 \
+  || die "admin user '$ADMIN_USER' does not exist"
+[ "$ADMIN_USER" != "$GAMES_USER" ] \
+  || die "admin user and games user are both '$GAMES_USER'"
+
 id "$GAMES_USER" >/dev/null 2>&1 \
   || die "user '$GAMES_USER' does not exist; create it first (see docs/04-kiosk-session.md)"
 
@@ -59,6 +71,8 @@ done
 
 say "installing kiosk configuration into $KIOSK_ETC"
 install -m 0644 "$REPO_DIR/config/openbox-rc.xml" "$KIOSK_ETC/openbox-rc.xml"
+printf '%s\n' "$ADMIN_USER" > "$KIOSK_ETC/admin-user"
+chmod 0644 "$KIOSK_ETC/admin-user"
 
 say "installing the X session entry"
 install -d -m 0755 /usr/share/xsessions
@@ -112,7 +126,7 @@ cat <<EOF
 Kiosk installed.
 
   reboot        SDDM autologins '$GAMES_USER' straight into ScummVM
-  admin shell   Ctrl+Alt+Shift+F12, then the admin user's password
+  admin shell   Ctrl+Alt+Shift+F12, then the password for '$ADMIN_USER'
   network       sudo $PREFIX/kiosk-network.sh on|off
   games         $GAMES_HOME/Games
 
