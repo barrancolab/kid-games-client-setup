@@ -96,6 +96,11 @@ for f in "$ROOT"/etc/sddm.conf.d/*.conf; do
   fi
 done
 
+# A pending one-shot boot or an in-flight desktop-once boot must not
+# rewrite the autologin after we leave.
+rm -rf "$ROOT/var/lib/kiosk-boot-mode"
+rm -f "$ROOT/etc/systemd/system/graphical.target.wants/kiosk-boot-mode.service"
+
 say "restoring the desktop autologin for $admin"
 cat > "$ROOT/etc/sddm.conf" <<EOF
 [Autologin]

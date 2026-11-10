@@ -72,7 +72,8 @@ say "installing kiosk scripts into $PREFIX"
 install -d -m 0755 "$PREFIX" "$KIOSK_ETC"
 for s in kiosk-session.sh kiosk-supervisor.sh kiosk-admin.sh \
          kiosk-admin-request.sh kiosk-volume.sh kiosk-network.sh \
-         scummvm-kiosk.sh make-manifest.sh verify-manifest.sh; do
+         scummvm-kiosk.sh make-manifest.sh verify-manifest.sh \
+         kiosk-boot-mode.sh kiosk-desktop-once.sh; do
   install -m 0755 "$REPO_DIR/scripts/$s" "$PREFIX/$s"
 done
 
@@ -107,6 +108,12 @@ chmod 0644 /etc/sddm.conf
 
 systemctl enable sddm
 systemctl disable lightdm 2>/dev/null || true
+
+say "installing the one-shot desktop boot helper"
+install -m 0644 "$REPO_DIR/config/kiosk-boot-mode.service" \
+  /etc/systemd/system/kiosk-boot-mode.service
+systemctl daemon-reload
+systemctl enable kiosk-boot-mode.service >/dev/null 2>&1 || true
 
 say "hardening"
 install -d -m 0755 /etc/systemd/logind.conf.d

@@ -39,6 +39,26 @@ ip address          # must show only lo
 Update `manifests/versions.example.md` afterwards and re-run the acceptance
 tests. Never leave the machine networked after the window closes.
 
+## Getting the desktop for exactly one boot
+
+The kiosk autologins, so there is no greeter to pick a session from. To get
+one, arm the one-shot and reboot:
+
+```bash
+sudo kiosk-desktop-once
+```
+
+The next boot starts SDDM normally and you can choose the **Lubuntu** session.
+The boot after that restores the kiosk autologin automatically, so no cleanup
+is needed.
+
+- Arm it without rebooting now: `sudo kiosk-desktop-once --no-reboot`
+- Cancel before rebooting: `sudo kiosk-desktop-once --cancel`
+
+This works from the kiosk admin shell (`Ctrl+Alt+Shift+F12`) and from the
+GRUB "Admin console (no kiosk)" entry. It only rewrites `/etc/sddm.conf` for
+that one boot; the saved kiosk config is restored before SDDM starts again.
+
 ## Rebuilding the client
 
 1. Reflash the installer USB from the verified ISO.

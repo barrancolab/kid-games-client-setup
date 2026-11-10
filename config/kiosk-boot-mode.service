@@ -1,0 +1,11 @@
+[Unit]
+Description=Kiosk one-shot boot mode
+After=local-fs.target
+Before=display-manager.service sddm.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/kiosk-boot-mode.sh
+
+[Install]
+WantedBy=graphical.target
