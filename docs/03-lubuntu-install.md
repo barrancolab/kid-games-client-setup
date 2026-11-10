@@ -48,7 +48,7 @@ reactivate and you are back to `EBUSY`.
 | User | your own account (administrator), e.g. `jbarranco` |
 | Ubuntu Pro / Livepatch | Skip |
 
-Do **not** create the `games` user here. It is created in phase 3, after the
+Do **not** create the `kiosk` user here. It is created in phase 3, after the
 kiosk scripts are in place.
 
 ## First boot
@@ -83,11 +83,11 @@ sudo /media/$USER/writable/kiosk-payload/kid-games-client-setup/scripts/setup-cl
 That one command:
 
 1. installs the offline `.deb` set (unclutter, xterm, SDL2, audio libs),
-2. creates the locked `games` user,
+2. creates the locked `kiosk` user,
 3. links `/opt/scummvm/scummvm`,
 4. runs `install-kiosk.sh` (Openbox session, SDDM autologin, hardening),
 5. adds the GRUB admin-console entry,
-6. copies the games to `/home/games/Games`,
+6. copies the games to `/home/kiosk/Games`,
 7. registers them with ScummVM,
 8. writes `manifest.sha256`, and
 9. turns networking off.

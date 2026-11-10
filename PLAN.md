@@ -59,7 +59,7 @@ the USB has been launched successfully on the staging machine.
 - [ ] Set BIOS: UEFI, Secure Boot off if needed, USB boot on, AC power recovery
       on, PXE/Wake-on-LAN off, Wi-Fi/Bluetooth off if present.
 - [ ] Boot the installer USB and install Lubuntu with the minimal profile.
-- [ ] Create one admin account (sudo) only; create `games` later.
+- [ ] Create one admin account (sudo) only; create `kiosk` later.
 - [ ] Partition: single ext4 root, no separate home, swap file or zram.
 - [ ] First boot with the Ethernet cable unplugged.
 - [ ] Disable Wi-Fi, Bluetooth, and NetworkManager autoconnect; set clock and
@@ -72,7 +72,7 @@ bring the link up and take it back down deliberately.
 
 ## Phase 3 — Kiosk session (2–4 hours)
 
-- [ ] Create the `games` user (no sudo, random password).
+- [ ] Create the `kiosk` user (no sudo, random password).
 - [ ] Install ScummVM to `/opt/scummvm` and the wrapper to `/usr/local/bin`.
 - [ ] Install the kiosk scripts and configs with `scripts/install-kiosk.sh`.
 - [ ] Configure SDDM autologin to the `kiosk` X session.
@@ -87,7 +87,7 @@ manager, settings app, or login prompt; a reboot returns to ScummVM.
 
 ## Phase 4 — Games (1–2 hours per batch)
 
-- [ ] Copy game data to `/home/games/Games/<Title>/` and fix ownership.
+- [ ] Copy game data to `/home/kiosk/Games/<Title>/` and fix ownership.
 - [ ] Add each game in ScummVM; confirm the detected target and engine version.
 - [ ] Configure per-game options: subtitles, speech/music/SFX volume, autosave,
       difficulty where available.
@@ -131,7 +131,7 @@ or verified; the recovery card exists.
 | Wyse UEFI quirks block the installer | Cannot install | Fall back to legacy BIOS boot; disable Secure Boot |
 | Old OS leaves LVM/ZFS metadata; installer refuses to erase the disk | Cannot install | `vgchange -an`, `zpool export -a`, `dmsetup remove_all`, then zero the first 64 MB with `dd` |
 | AppImage needs FUSE, which is missing | ScummVM will not start | Use the static tarball, or run with `APPIMAGE_EXTRACT_AND_RUN=1` |
-| Child finds the admin key combo | Desktop access as `games` | Combo is obscure; `games` has no sudo; full admin still needs the GRUB console |
+| Child finds the admin key combo | Desktop access as `kiosk` | Combo is obscure; `kiosk` has no sudo; full admin still needs the GRUB console |
 | Power loss during a save | Corrupt save | ext4 journal, autosave where supported, monthly backups |
 | SSD fills up | Cannot add games | 128 GB SSD, inventory sizes, prune before adding |
 | No security updates | Theoretically vulnerable | Offline by default, no browser, no untrusted media; patch in maintenance windows |

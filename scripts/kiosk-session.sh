@@ -1,7 +1,7 @@
 #!/bin/sh
 # kiosk-session.sh — X session entry point for the kiosk.
 #
-# Installed to /usr/local/bin and started by SDDM as the 'games' user.
+# Installed to /usr/local/bin and started by SDDM as the 'kiosk' user.
 # It brings up a bare Openbox (no panel, no desktop icons) and then hands
 # the session over to the supervisor, which owns the ScummVM relaunch loop.
 set -eu

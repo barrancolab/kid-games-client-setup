@@ -11,7 +11,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PREFIX=/usr/local/bin
 KIOSK_ETC=/etc/kiosk
-GAMES_USER=${GAMES_USER:-games}
+GAMES_USER=${GAMES_USER:-kiosk}
 GAMES_HOME=/home/$GAMES_USER
 SCUMMVM_DIR=${SCUMMVM_DIR:-/opt/scummvm}
 
@@ -30,10 +30,17 @@ fi
 id "$ADMIN_USER" >/dev/null 2>&1 \
   || die "admin user '$ADMIN_USER' does not exist"
 [ "$ADMIN_USER" != "$GAMES_USER" ] \
-  || die "admin user and games user are both '$GAMES_USER'"
+  || die "admin user and kiosk user are both '$GAMES_USER'"
 
 id "$GAMES_USER" >/dev/null 2>&1 \
   || die "user '$GAMES_USER' does not exist; create it first (see docs/04-kiosk-session.md)"
+
+# 'games' is a stock system account (uid 5, home /usr/games) on Ubuntu. If the
+# kiosk user resolved to that, autologin would use a system uid and the wrong
+# home, and the session would fail. Refuse rather than build a broken kiosk.
+kiosk_uid=$(id -u "$GAMES_USER")
+[ "$kiosk_uid" -ge 1000 ] \
+  || die "user '$GAMES_USER' has uid $kiosk_uid; it must be a normal user (uid >= 1000)"
 
 [ -x "$SCUMMVM_DIR/scummvm" ] \
   || die "$SCUMMVM_DIR/scummvm not found; install ScummVM first (see docs/05-scummvm.md)"
@@ -81,6 +88,23 @@ install -m 0644 "$REPO_DIR/config/kiosk.desktop" /usr/share/xsessions/kiosk.desk
 say "configuring SDDM autologin"
 install -d -m 0755 /etc/sddm.conf.d
 install -m 0644 "$REPO_DIR/config/10-kiosk.conf" /etc/sddm.conf.d/10-kiosk.conf
+
+# Lubuntu's installer writes its own [Autologin] (User=<admin>,
+# Session=Lubuntu) into /etc/sddm.conf. SDDM reads that file *after* every
+# drop-in, so it wins. Back it up once and write ours there.
+if [ -f /etc/sddm.conf ] && [ ! -f "$KIOSK_ETC/sddm.conf.orig" ]; then
+  cp -a /etc/sddm.conf "$KIOSK_ETC/sddm.conf.orig"
+fi
+cat > /etc/sddm.conf <<EOF
+# Managed by install-kiosk.sh. SDDM reads this file after sddm.conf.d/,
+# so this overrides the desktop autologin written by the installer.
+[Autologin]
+User=$GAMES_USER
+Session=kiosk
+Relogin=true
+EOF
+chmod 0644 /etc/sddm.conf
+
 systemctl enable sddm
 systemctl disable lightdm 2>/dev/null || true
 

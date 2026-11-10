@@ -2,7 +2,7 @@
 #
 # One row per game. Fields are tab-separated.
 #
-#   directory          Folder name under /home/games/Games/
+#   directory          Folder name under /home/kiosk/Games/
 #   scummvm_target     Config section name assigned by `scummvm --add`
 #                      (for Freddi Fish 1 this is "freddi-win"; the GameID
 #                      reported by --detect is "scumm:freddi")

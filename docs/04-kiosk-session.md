@@ -6,7 +6,7 @@ terminal, no browser, and no file manager in the child's path.
 ## Design
 
 ```
-SDDM (autologin as 'games')
+SDDM (autologin as 'kiosk')
   └── kiosk.desktop  ->  /usr/local/bin/kiosk-session.sh
         ├── xset / xsetroot / unclutter      no blanking, black root, no cursor
         ├── openbox --config-file /etc/kiosk/openbox-rc.xml
@@ -17,7 +17,7 @@ SDDM (autologin as 'games')
 
 Layers of protection, weakest to strongest:
 
-1. **No desktop session is reachable.** The `games` user has exactly one
+1. **No desktop session is reachable.** The `kiosk` user has exactly one
    X session available: `kiosk`.
 2. **Openbox has no keybinds.** No Alt+Tab, no Alt+F4, no root menu, no
    workspace switching. Only the admin combo and the media keys.
@@ -31,14 +31,33 @@ Layers of protection, weakest to strongest:
 None of this is a security boundary. A child with a screwdriver and a USB stick
 wins. It is friction, and it is enough.
 
-## Creating the games user
+## SDDM autologin precedence
+
+SDDM reads, in order:
+
+1. `/usr/lib/sddm/sddm.conf.d/*.conf`
+2. `/etc/sddm.conf.d/*.conf`
+3. `/etc/sddm.conf`  ← last, so it wins
+
+Lubuntu's installer writes `[Autologin] User=<admin> Session=Lubuntu` into
+`/etc/sddm.conf`. A kiosk drop-in in `sddm.conf.d/` is therefore ignored, and
+the machine boots to the desktop. `install-kiosk.sh` backs that file up to
+`/etc/kiosk/sddm.conf.orig` and writes the kiosk autologin there instead.
+
+## Creating the kiosk user
 
 ```bash
-sudo useradd --create-home --shell /usr/sbin/nologin games
-sudo passwd -l games          # no password, no login
+sudo useradd --create-home --shell /usr/sbin/nologin kiosk
+sudo passwd -l kiosk          # no password, no login
 ```
 
-`games` has no sudo. It owns `/home/games` and nothing else.
+`kiosk` has no sudo. It owns `/home/kiosk` and nothing else.
+
+Do **not** call this account `games`: Ubuntu ships a system account with that
+name (`uid=5`, home `/usr/games`). `useradd` would silently do nothing, and
+autologin would run the session as a system user with the wrong home — which
+fails and, with `Relogin=true`, loops the display manager. The installer
+refuses to continue if the account has a uid below 1000.
 
 Some PAM stacks check `/etc/shells` before starting a session, so
 `/usr/sbin/nologin` must be listed there for SDDM to accept the account. It
@@ -47,14 +66,14 @@ still refuses interactive logins; the locked password is the real lock.
 
 ## ScummVM's own settings
 
-`/home/games/.config/scummvm/scummvm.ini`:
+`/home/kiosk/.config/scummvm/scummvm.ini`:
 
 ```ini
 [scummvm]
 fullscreen=true
 confirm_exit=true
 gui_return_to_launcher_at_exit=true
-savepath=/home/games/saves
+savepath=/home/kiosk/saves
 extrapath=/opt/scummvm/extra
 ```
 

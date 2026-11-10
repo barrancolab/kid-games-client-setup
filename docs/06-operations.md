@@ -11,18 +11,18 @@
    scummvm --detect --path="/games/<Title>"
    ```
 
-4. Copy to the client: `/home/games/Games/<Title>/`.
-5. Fix ownership: `sudo chown -R games:games "/home/games/Games/<Title>"`.
-6. Add it: `sudo -u games /usr/local/bin/scummvm-kiosk.sh --add --path=...`
+4. Copy to the client: `/home/kiosk/Games/<Title>/`.
+5. Fix ownership: `sudo chown -R kiosk:kiosk "/home/kiosk/Games/<Title>"`.
+6. Add it: `sudo -u kiosk /usr/local/bin/scummvm-kiosk.sh --add --path=...`
 7. Launch it once and check audio, input, save, and load.
 8. Record it in `manifests/games.tsv`.
 
 ## Backing up saves
 
-Saves live in `/home/games/saves/`. They are small.
+Saves live in `/home/kiosk/saves/`. They are small.
 
 ```bash
-sudo tar czf /media/usb/saves-$(date +%F).tar.gz -C /home/games saves
+sudo tar czf /media/usb/saves-$(date +%F).tar.gz -C /home/kiosk saves
 ```
 
 Do this monthly, and before any change to the machine.
@@ -65,24 +65,24 @@ The session started but ScummVM did not. Log in via the GRUB admin console:
 
 ```bash
 journalctl -u sddm -b
-sudo -u games /usr/local/bin/scummvm-kiosk.sh
+sudo -u kiosk /usr/local/bin/scummvm-kiosk.sh
 ```
 
 ### ScummVM restarts constantly
 
-It is crashing on startup. Run it as `games` from the admin console and read
+It is crashing on startup. Run it as `kiosk` from the admin console and read
 the output. A missing game path or an unreadable save directory are the usual
 causes.
 
 ### Game audio is missing
 
 ```bash
-sudo -u games pactl info
-sudo -u games wpctl status
+sudo -u kiosk pactl info
+sudo -u kiosk wpctl status
 ```
 
-The `games` user needs access to the audio session. On PipeWire this normally
-works; if not, add `games` to the `audio` group.
+The `kiosk` user needs access to the audio session. On PipeWire this normally
+works; if not, add `kiosk` to the `audio` group.
 
 ### Controller not detected
 

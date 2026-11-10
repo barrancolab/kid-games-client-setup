@@ -29,11 +29,11 @@ Check:
 
 ## Adding games
 
-Game data lives in `/home/games/Games/<Title>/`. Add each one once:
+Game data lives in `/home/kiosk/Games/<Title>/`. Add each one once:
 
 ```bash
-sudo -u games /usr/local/bin/scummvm-kiosk.sh --add --recursive \
-  --path="/home/games/Games/Freddi Fish 1"
+sudo -u kiosk /usr/local/bin/scummvm-kiosk.sh --add --recursive \
+  --path="/home/kiosk/Games/Freddi Fish 1"
 ```
 
 Or interactively from the launcher: **Add Game** → pick the folder.
@@ -41,9 +41,9 @@ Or interactively from the launcher: **Add Game** → pick the folder.
 Verify the detected target:
 
 ```bash
-sudo -u games /opt/scummvm/scummvm \
-  --config=/home/games/.config/scummvm/scummvm.ini \
-  --detect --path="/home/games/Games/Freddi Fish 1"
+sudo -u kiosk /opt/scummvm/scummvm \
+  --config=/home/kiosk/.config/scummvm/scummvm.ini \
+  --detect --path="/home/kiosk/Games/Freddi Fish 1"
 ```
 
 Expected for Freddi Fish 1: GameID `scumm:freddi`, target `freddi-win`. The

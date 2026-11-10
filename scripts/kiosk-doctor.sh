@@ -7,7 +7,7 @@
 # Safe to re-run. It does not reboot; it prints what to do at the end.
 set -uo pipefail
 
-GAMES_USER=${GAMES_USER:-games}
+GAMES_USER=${GAMES_USER:-kiosk}
 GAMES_HOME=/home/$GAMES_USER
 SCUMMVM_DIR=${SCUMMVM_DIR:-/opt/scummvm}
 SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -63,10 +63,10 @@ section "session entries"
 run 'ls -la /usr/share/xsessions/ /usr/local/share/xsessions/ 2>&1'
 run 'cat /usr/share/xsessions/kiosk.desktop 2>&1'
 
-section "games account"
-run 'getent passwd games'
-run 'id games 2>&1'
-run 'ls -ld /home/games /home/games/Games /home/games/.config/scummvm 2>&1'
+section "kiosk account"
+run 'getent passwd kiosk'
+run 'id kiosk 2>&1'
+run 'ls -ld /home/kiosk /home/kiosk/Games /home/kiosk/.config/scummvm 2>&1'
 run 'grep -x /usr/sbin/nologin /etc/shells || echo "nologin NOT in /etc/shells"'
 
 section "kiosk files"
@@ -79,18 +79,18 @@ run 'ls -l /usr/local/bin/kiosk-session.sh /usr/local/bin/kiosk-supervisor.sh \
 section "scummvm"
 run 'ls -l /opt/scummvm/scummvm /usr/games/scummvm 2>&1'
 run '/opt/scummvm/scummvm --version 2>&1 | sed -n 1p'
-run 'cat /home/games/.config/scummvm/scummvm.ini 2>&1'
+run 'cat /home/kiosk/.config/scummvm/scummvm.ini 2>&1'
 
 section "sddm journal (this boot)"
 run 'journalctl -u sddm -b --no-pager 2>&1 | tail -150'
 
 section "autologin-related lines"
-run 'journalctl -u sddm -b --no-pager 2>&1 | grep -iE "autologin|session|games|unable|fail|error" | tail -40'
+run 'journalctl -u sddm -b --no-pager 2>&1 | grep -iE "autologin|session|kiosk|unable|fail|error" | tail -40'
 
 # ---------------------------------------------------------------- repair
 say "applying repairs"
 
-# 1. games account, with a nologin shell and a locked password.
+# 1. kiosk account, with a nologin shell and a locked password.
 if id "$GAMES_USER" >/dev/null 2>&1; then
   current_shell=$(getent passwd "$GAMES_USER" | cut -d: -f7)
   if [ "$current_shell" != /usr/sbin/nologin ]; then
@@ -99,7 +99,7 @@ if id "$GAMES_USER" >/dev/null 2>&1; then
   fi
 else
   say "creating $GAMES_USER"
-  useradd --create-home --shell /usr/sbin/nologin "$GAMES_USER"
+  useradd --create-home --user-group --shell /usr/sbin/nologin "$GAMES_USER"
   passwd -l "$GAMES_USER" >/dev/null 2>&1
 fi
 grep -qxF /usr/sbin/nologin /etc/shells 2>/dev/null \
@@ -149,7 +149,7 @@ systemctl disable lightdm >/dev/null 2>&1 || true
 # ---------------------------------------------------------------- report
 section "what changed"
 run 'ls -l /etc/sddm.conf /etc/sddm.conf.d/10-kiosk.conf /usr/share/xsessions/kiosk.desktop 2>&1'
-run 'getent passwd games'
+run 'getent passwd kiosk'
 
 usb_mount=""
 usb_dev=$(blkid -L writable 2>/dev/null || true)

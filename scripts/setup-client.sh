@@ -14,12 +14,15 @@
 # will not duplicate games or overwrite an existing ScummVM config.
 set -euo pipefail
 
+die() { printf 'error: %s\n' "$*" >&2; exit 1; }
+say() { printf '\n==> %s\n' "$*"; }
+
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PAYLOAD_DIR="${1:-$(cd "$REPO_DIR/.." && pwd)}"
 DEBS="$PAYLOAD_DIR/debs"
 GAMES_SRC="$PAYLOAD_DIR/games"
 
-GAMES_USER=${GAMES_USER:-games}
+GAMES_USER=${GAMES_USER:-kiosk}
 GAMES_HOME=/home/$GAMES_USER
 SCUMMVM_DIR=${SCUMMVM_DIR:-/opt/scummvm}
 INI="$GAMES_HOME/.config/scummvm/scummvm.ini"
@@ -33,9 +36,6 @@ fi
 id "$ADMIN_USER" >/dev/null 2>&1 || die "admin user '$ADMIN_USER' does not exist"
 export ADMIN_USER
 
-die() { printf 'error: %s\n' "$*" >&2; exit 1; }
-say() { printf '\n==> %s\n' "$*"; }
-
 [ "$(id -u)" -eq 0 ] || die "run as root"
 [ -d "$DEBS" ]      || die "no debs directory at $DEBS"
 [ -d "$GAMES_SRC" ] || die "no games directory at $GAMES_SRC"
@@ -47,14 +47,20 @@ apt-get install -y --no-install-recommends "$DEBS"/*.deb
 
 [ -x /usr/games/scummvm ] || die "scummvm was not installed"
 
-# ---------------------------------------------------------------- games user
+# ---------------------------------------------------------------- kiosk user
 if id "$GAMES_USER" >/dev/null 2>&1; then
   say "user '$GAMES_USER' already exists"
 else
   say "creating user '$GAMES_USER'"
-  useradd --create-home --shell /usr/sbin/nologin "$GAMES_USER"
+  useradd --create-home --user-group --shell /usr/sbin/nologin "$GAMES_USER"
   passwd -l "$GAMES_USER" >/dev/null
 fi
+
+# 'games' is a stock system account on Ubuntu (uid 5, home /usr/games).
+# A kiosk session under it cannot work, so refuse loudly instead.
+kiosk_uid=$(id -u "$GAMES_USER")
+[ "$kiosk_uid" -ge 1000 ] \
+  || die "user '$GAMES_USER' is a system account (uid $kiosk_uid); set GAMES_USER=kiosk"
 
 # SDDM's PAM stack may consult /etc/shells; nologin must be listed there for
 # the account to be accepted, while still refusing interactive logins.
@@ -124,7 +130,7 @@ say "making sure networking is off"
 
 # ---------------------------------------------------------------- summary
 say "done"
-printf 'games user      %s (locked password, nologin shell)\n' "$GAMES_USER"
+printf 'kiosk user      %s (locked password, nologin shell)\n' "$GAMES_USER"
 printf 'scummvm         %s\n' "$scummvm_version"
 printf 'registered now  %s new game(s)\n' "$registered"
 printf 'games directory %s\n' "$GAMES_HOME/Games"

@@ -42,9 +42,10 @@ menuentry 'Admin console (no kiosk)' --class ubuntu --class gnu-linux --class gn
 EOF
 chmod 0755 /etc/grub.d/40_admin_console
 
-# Hide the menu; GRUB_RECORDFAIL_TIMEOUT stops a failed boot from parking
-# the machine on a menu forever.
-for kv in GRUB_TIMEOUT=0 GRUB_TIMEOUT_STYLE=hidden GRUB_RECORDFAIL_TIMEOUT=0; do
+# Keep the menu invisible, but leave a few seconds in which Esc/Shift
+# reveals it. A zero timeout makes the admin hatch unreachable on UEFI
+# machines that do not catch the key in time.
+for kv in GRUB_TIMEOUT=3 GRUB_TIMEOUT_STYLE=hidden GRUB_RECORDFAIL_TIMEOUT=3; do
   key=${kv%%=*}
   if grep -q "^${key}=" /etc/default/grub; then
     sed -i "s|^${key}=.*|${kv}|" /etc/default/grub
