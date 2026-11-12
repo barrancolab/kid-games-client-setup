@@ -28,7 +28,7 @@ Flash to the whole disk, by-id path:
 
 ```bash
 sudo dd if=lubuntu-26.04.1-desktop-amd64.iso \
-  of=/dev/disk/by-id/usb-Lexar_USB_Flash_Drive_2597197971032510-0:0 \
+  of=/dev/disk/by-id/usb-Your_USB_Drive_SERIAL-0:0 \
   bs=4M status=progress oflag=sync conv=fsync
 sync
 ```

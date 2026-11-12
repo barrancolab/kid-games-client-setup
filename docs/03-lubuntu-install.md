@@ -45,7 +45,7 @@ reactivate and you are back to `EBUSY`.
 | Third-party drivers | **No** |
 | Download updates while installing | **No** |
 | Hostname | `kiosk` |
-| User | your own account (administrator), e.g. `jbarranco` |
+| User | your own account (administrator), e.g. `admin` |
 | Ubuntu Pro / Livepatch | Skip |
 
 Do **not** create the `kiosk` user here. It is created in phase 3, after the

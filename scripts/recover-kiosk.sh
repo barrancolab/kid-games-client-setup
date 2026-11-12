@@ -66,7 +66,7 @@ done
 [ -n "$ROOT" ] || die "could not find the installed Lubuntu root"
 
 admin=$(awk -F: '$3 >= 1000 && $3 < 65534 { print $1; exit }' "$ROOT/etc/passwd")
-[ -n "$admin" ] || admin=jbarranco
+[ -n "$admin" ] || admin=admin
 
 session=Lubuntu
 [ -f "$ROOT/usr/share/xsessions/Lubuntu.desktop" ] || session=lxqt
