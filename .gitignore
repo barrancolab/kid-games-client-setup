@@ -13,6 +13,12 @@ games/
 *.bin
 *.cue
 
+# ScummVM engine data (e.g. Freddi Fish's .he0-.he4)
+*.he[0-9]
+*.HE[0-9]
+*.smk
+*.SMK
+
 # Keep manifests even though they are text
 !manifests/*.tsv
 !manifests/*.md
